@@ -7,9 +7,26 @@ export interface ExperienceItem {
   description: string;
   achievements: string[];
   technologies: string[];
+  current?: boolean;
 }
 
 export const experience: ExperienceItem[] = [
+  {
+    id: "havaist",
+    company: "Havaist Ulaşım",
+    role: "Project Software Specialist",
+    period: "2026 — Present",
+    location: "Istanbul",
+    current: true,
+    description:
+      "Building and evolving software for Istanbul Airport’s official ground-transport network — operational tools that keep routes, schedules, and passenger flows reliable.",
+    achievements: [
+      "Owning project software delivery across operational product surfaces",
+      "Translating transit workflows into calm, dependable interfaces",
+      "Shipping improvements that support day-to-day airport shuttle operations",
+    ],
+    technologies: ["React", "TypeScript", "Next.js", "REST"],
+  },
   {
     id: "1",
     company: "DREAXM",

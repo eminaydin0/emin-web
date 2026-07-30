@@ -37,7 +37,9 @@ export function About() {
             <p className="text-[28px] font-semibold tracking-[-0.03em] text-foreground md:text-[40px]">
               <CountUp value={6} />
             </p>
-            <p className="mt-1 text-[12px] text-muted md:text-[14px]">Roles shipped</p>
+            <p className="mt-1 text-[12px] text-muted md:text-[14px]">
+              Roles shipped
+            </p>
           </div>
         </div>
 
