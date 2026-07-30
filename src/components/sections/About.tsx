@@ -1,74 +1,83 @@
 "use client";
 
 import { SectionReveal } from "@/components/brand/SectionReveal";
-import { TextReveal } from "@/components/brand/TextReveal";
+import { CountUp } from "@/components/brand/CountUp";
 import { aboutContent } from "@/data/site";
 
 export function About() {
   return (
-    <section id="about" className="section-pad relative bg-transparent">
-      <div className="container-brand">
-        <SectionReveal variant="clip">
-          <p className="font-mono text-[12px] tracking-[0.16em] text-muted uppercase">
-            {aboutContent.eyebrow}
+    <section id="about" className="section-pad bg-background-soft">
+      <div className="container-brand text-center">
+        <SectionReveal>
+          <h2 className="text-[32px] font-semibold tracking-[-0.02em] text-foreground md:text-[40px]">
+            {aboutContent.headline}
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-[19px] leading-snug text-muted md:text-[21px]">
+            {aboutContent.paragraphs[0]}
           </p>
         </SectionReveal>
 
-        <TextReveal
-          as="h2"
-          delay={0.05}
-          className="mt-6 max-w-3xl text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.05] font-semibold tracking-[-0.05em] text-foreground"
+        <div
+          className="tile mt-12 grid grid-cols-3 gap-4 bg-white p-6 md:p-8"
+          data-reveal
         >
-          {aboutContent.headline}
-        </TextReveal>
-
-        <div className="mt-16 grid gap-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
-          <SectionReveal delay={0.08}>
-            <div className="space-y-6 text-[16px] leading-[1.8] text-muted md:text-[17px]">
-              {aboutContent.paragraphs.map((p) => (
-                <p key={p.slice(0, 24)}>{p}</p>
-              ))}
-            </div>
-          </SectionReveal>
-
-          <SectionReveal delay={0.12}>
-            <ol className="relative space-y-0 border-l border-border pl-6 md:pl-8">
-              {aboutContent.journey.map((step, i) => (
-                <li key={step.title} className="relative pb-10 last:pb-0">
-                  <span className="absolute top-1.5 -left-[31px] h-2.5 w-2.5 rounded-full border-2 border-accent bg-white md:-left-[39px]" />
-                  <p className="font-mono text-[11px] tracking-[0.14em] text-muted uppercase">
-                    {step.year}
-                  </p>
-                  <h3 className="mt-2 text-lg font-semibold tracking-[-0.03em] text-foreground">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-muted">
-                    {step.text}
-                  </p>
-                  {i < aboutContent.journey.length - 1 && (
-                    <span className="sr-only">Next</span>
-                  )}
-                </li>
-              ))}
-            </ol>
-          </SectionReveal>
+          <div>
+            <p className="text-[28px] font-semibold tracking-[-0.03em] text-foreground md:text-[40px]">
+              <CountUp value={4} suffix="+" />
+            </p>
+            <p className="mt-1 text-[12px] text-muted md:text-[14px]">Years</p>
+          </div>
+          <div>
+            <p className="text-[28px] font-semibold tracking-[-0.03em] text-foreground md:text-[40px]">
+              <CountUp value={12} suffix="+" />
+            </p>
+            <p className="mt-1 text-[12px] text-muted md:text-[14px]">Products</p>
+          </div>
+          <div>
+            <p className="text-[28px] font-semibold tracking-[-0.03em] text-foreground md:text-[40px]">
+              <CountUp value={6} />
+            </p>
+            <p className="mt-1 text-[12px] text-muted md:text-[14px]">Roles shipped</p>
+          </div>
         </div>
 
-        <SectionReveal delay={0.1}>
-          <ul className="mt-20 grid gap-px overflow-hidden rounded-2xl bg-border sm:grid-cols-2">
-            {aboutContent.focus.map((item) => (
-              <li
-                key={item.label}
-                className="bg-background px-6 py-7 transition-colors hover:bg-background-soft md:px-8 md:py-8"
-              >
-                <p className="text-[15px] font-medium tracking-[-0.02em] text-foreground">
-                  {item.label}
-                </p>
-                <p className="mt-2 text-sm text-muted">{item.detail}</p>
-              </li>
-            ))}
-          </ul>
-        </SectionReveal>
+        <div className="mt-4 grid gap-4 text-left sm:grid-cols-2" data-stagger>
+          {aboutContent.journey.map((step) => (
+            <div
+              key={step.title}
+              data-stagger-item
+              className="tile h-full bg-white p-7 md:p-8"
+            >
+              <p className="text-[12px] font-semibold tracking-wide text-accent uppercase">
+                {step.year}
+              </p>
+              <h3 className="mt-2 text-[21px] font-semibold tracking-[-0.02em] text-foreground">
+                {step.title}
+              </h3>
+              <p className="mt-3 text-[15px] leading-relaxed text-muted md:text-[17px]">
+                {step.text}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div
+          className="mt-4 grid gap-4 text-left sm:grid-cols-2 lg:grid-cols-4"
+          data-stagger
+        >
+          {aboutContent.focus.map((item) => (
+            <div
+              key={item.label}
+              data-stagger-item
+              className="tile bg-white p-6"
+            >
+              <p className="text-[15px] font-semibold tracking-[-0.01em] text-foreground">
+                {item.label}
+              </p>
+              <p className="mt-2 text-[14px] text-muted">{item.detail}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

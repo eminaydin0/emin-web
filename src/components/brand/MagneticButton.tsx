@@ -10,7 +10,7 @@ interface MagneticButtonProps {
   href?: string;
   onClick?: () => void;
   type?: "button" | "submit";
-  variant?: "primary" | "secondary" | "ghost";
+  variant?: "primary" | "secondary" | "ghost" | "link";
 }
 
 export function MagneticButton({
@@ -21,7 +21,7 @@ export function MagneticButton({
   type = "button",
   variant = "primary",
 }: MagneticButtonProps) {
-  const { ref, springX, springY, onMove, onLeave } = useMagnetic(0.28);
+  const { ref, springX, springY, onMove, onLeave } = useMagnetic(0.2);
   const Comp = href ? "a" : "button";
 
   return (
@@ -39,13 +39,14 @@ export function MagneticButton({
         type={href ? undefined : type}
         onClick={onClick}
         className={cn(
-          "focus-ring inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-[13px] font-medium transition-colors",
+          "focus-ring inline-flex items-center justify-center gap-2 text-[17px] transition-colors",
           variant === "primary" &&
-            "bg-foreground text-white hover:bg-foreground/90",
+            "rounded-full bg-accent px-5 py-2.5 text-[14px] font-normal text-white hover:bg-accent-hover",
           variant === "secondary" &&
-            "bg-accent text-white hover:bg-accent-hover",
+            "rounded-full bg-accent px-5 py-2.5 text-[14px] font-normal text-white hover:bg-accent-hover",
           variant === "ghost" &&
-            "border border-border bg-white text-foreground hover:border-border-strong hover:bg-background-soft",
+            "rounded-full bg-foreground/[0.08] px-5 py-2.5 text-[14px] font-normal text-foreground hover:bg-foreground/[0.12]",
+          variant === "link" && "apple-link",
           className
         )}
       >

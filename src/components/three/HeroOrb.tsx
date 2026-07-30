@@ -1,73 +1,217 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Float } from "@react-three/drei";
-import { useMemo, useRef } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useTexture } from "@react-three/drei";
+import { Suspense, useEffect, useRef, useState } from "react";
+import type { MotionValue } from "framer-motion";
+import { useMotionValueEvent } from "framer-motion";
 import * as THREE from "three";
 
-function CoreMesh() {
-  const mesh = useRef<THREE.Mesh>(null);
-  const wire = useRef<THREE.LineSegments>(null);
+function EarthScene({
+  scrollProgress,
+}: {
+  scrollProgress: MotionValue<number>;
+}) {
+  const group = useRef<THREE.Group>(null);
+  const clouds = useRef<THREE.Mesh>(null);
+  const { camera, gl, size } = useThree();
+  const scroll = useRef(0);
+  const scrollSmooth = useRef(0);
+  const idle = useRef(0);
 
-  const geometry = useMemo(() => new THREE.IcosahedronGeometry(1.15, 1), []);
-  const edges = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry]);
+  const [colorMap, cloudMap] = useTexture([
+    "/textures/earth.jpg",
+    "/textures/earth-clouds.png",
+  ]);
+
+  useEffect(() => {
+    colorMap.colorSpace = THREE.SRGBColorSpace;
+    colorMap.anisotropy = 16;
+    colorMap.minFilter = THREE.LinearMipmapLinearFilter;
+    colorMap.magFilter = THREE.LinearFilter;
+    cloudMap.anisotropy = 8;
+  }, [colorMap, cloudMap]);
+
+  // Keep drawing buffer in sync — fixes intermittent half-clip
+  useEffect(() => {
+    if (size.width <= 0 || size.height <= 0) return;
+    gl.setSize(size.width, size.height, false);
+    if ("aspect" in camera) {
+      (camera as THREE.PerspectiveCamera).aspect = size.width / size.height;
+      camera.updateProjectionMatrix();
+    }
+  }, [size.width, size.height, gl, camera]);
+
+  useMotionValueEvent(scrollProgress, "change", (v) => {
+    scroll.current = v;
+  });
 
   useFrame((_, delta) => {
-    if (mesh.current) {
-      mesh.current.rotation.y += delta * 0.18;
-      mesh.current.rotation.x += delta * 0.06;
+    const dt = Math.min(delta, 0.05);
+    idle.current += dt * 0.028;
+
+    // Soft follow — premium inertia on scroll
+    scrollSmooth.current = THREE.MathUtils.damp(
+      scrollSmooth.current,
+      scroll.current,
+      2.4,
+      dt
+    );
+    const t = scrollSmooth.current;
+    const ease = t * t * (3 - 2 * t); // smoothstep
+
+    // Camera stays put — sphere always fully in frame (true circle).
+    // Growth is handled by CSS scale on the container in Hero.
+
+    if (group.current) {
+      const targetY = idle.current + ease * Math.PI * 2.6;
+      const targetX = 0.1 + ease * 0.16;
+
+      group.current.rotation.y = THREE.MathUtils.damp(
+        group.current.rotation.y,
+        targetY,
+        1.8,
+        dt
+      );
+      group.current.rotation.x = THREE.MathUtils.damp(
+        group.current.rotation.x,
+        targetX,
+        1.6,
+        dt
+      );
     }
-    if (wire.current) {
-      wire.current.rotation.y -= delta * 0.12;
-      wire.current.rotation.z += delta * 0.04;
+
+    if (clouds.current) {
+      clouds.current.rotation.y += dt * 0.018;
     }
   });
 
   return (
-    <Float speed={1.2} rotationIntensity={0.25} floatIntensity={0.55}>
-      <mesh ref={mesh} geometry={geometry}>
-        <meshPhysicalMaterial
-          color="#eef3ff"
-          metalness={0.15}
-          roughness={0.28}
-          transmission={0.55}
-          thickness={1.2}
-          transparent
-          opacity={0.92}
-          envMapIntensity={0.8}
-        />
-      </mesh>
-      <lineSegments ref={wire} geometry={edges}>
-        <lineBasicMaterial color="#2f6fed" transparent opacity={0.35} />
-      </lineSegments>
-      <mesh scale={0.42}>
-        <icosahedronGeometry args={[1, 0]} />
+    <group ref={group}>
+      <mesh>
+        <sphereGeometry args={[1, 96, 96]} />
         <meshStandardMaterial
-          color="#2f6fed"
-          emissive="#2f6fed"
+          map={colorMap}
+          color="#e8f2fc"
+          roughness={0.88}
+          metalness={0}
+          emissive="#2a5080"
           emissiveIntensity={0.35}
-          roughness={0.4}
-          metalness={0.2}
         />
       </mesh>
-    </Float>
+
+      <mesh ref={clouds} scale={1.008}>
+        <sphereGeometry args={[1, 64, 64]} />
+        <meshStandardMaterial
+          map={cloudMap}
+          transparent
+          opacity={0.18}
+          depthWrite={false}
+          roughness={1}
+          metalness={0}
+          color="#ffffff"
+        />
+      </mesh>
+    </group>
   );
 }
 
-export function HeroOrb() {
+function EarthFallbackMesh() {
+  const ref = useRef<THREE.Mesh>(null);
+  useFrame((_, delta) => {
+    if (ref.current) ref.current.rotation.y += delta * 0.08;
+  });
   return (
-    <div className="absolute inset-0">
-      <Canvas
-        dpr={[1, 1.5]}
-        camera={{ position: [0, 0, 4.2], fov: 42 }}
-        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-        style={{ background: "transparent" }}
-      >
-        <ambientLight intensity={0.85} />
-        <directionalLight position={[4, 3, 5]} intensity={1.1} color="#ffffff" />
-        <directionalLight position={[-3, -2, -2]} intensity={0.35} color="#2f6fed" />
-        <CoreMesh />
-      </Canvas>
+    <mesh ref={ref}>
+      <sphereGeometry args={[1, 64, 64]} />
+      <meshStandardMaterial color="#7eb6e0" roughness={0.7} metalness={0} />
+    </mesh>
+  );
+}
+
+export function HeroOrb({
+  scrollProgress,
+}: {
+  scrollProgress: MotionValue<number>;
+}) {
+  const wrap = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const el = wrap.current;
+    if (!el) return;
+
+    const check = () => {
+      const { width, height } = el.getBoundingClientRect();
+      if (width > 8 && height > 8) setReady(true);
+    };
+
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    // One more pass after layout settles (Lenis / sticky / fonts)
+    const t = window.setTimeout(check, 120);
+    return () => {
+      ro.disconnect();
+      window.clearTimeout(t);
+    };
+  }, []);
+
+  return (
+    <div ref={wrap} className="relative h-full w-full">
+      {ready ? (
+        <Canvas
+          dpr={[1, 2]}
+          camera={{ position: [0, 0, 3.95], fov: 30, near: 0.1, far: 50 }}
+          resize={{ scroll: false, debounce: 0 }}
+          gl={{
+            antialias: true,
+            alpha: true,
+            premultipliedAlpha: false,
+            powerPreference: "high-performance",
+            stencil: false,
+          }}
+          onCreated={({ gl }) => {
+            gl.setClearColor(0x000000, 0);
+            gl.setClearAlpha(0);
+            gl.toneMapping = THREE.ACESFilmicToneMapping;
+            gl.toneMappingExposure = 1.55;
+            gl.domElement.style.display = "block";
+            gl.domElement.style.width = "100%";
+            gl.domElement.style.height = "100%";
+          }}
+          style={{
+            background: "transparent",
+            width: "100%",
+            height: "100%",
+            display: "block",
+          }}
+        >
+          <ambientLight intensity={1.15} />
+          <directionalLight
+            position={[3.5, 2.5, 4]}
+            intensity={1.7}
+            color="#ffffff"
+          />
+          <directionalLight
+            position={[-3, 1, -1]}
+            intensity={0.85}
+            color="#d0e8fa"
+          />
+          <directionalLight
+            position={[0, -2, 2]}
+            intensity={0.45}
+            color="#f2f8ff"
+          />
+          <Suspense fallback={<EarthFallbackMesh />}>
+            <EarthScene scrollProgress={scrollProgress} />
+          </Suspense>
+        </Canvas>
+      ) : (
+        <div className="flex h-full w-full items-center justify-center">
+          <div className="h-[92%] w-[92%] rounded-full bg-[radial-gradient(circle_at_32%_28%,#d0e8fa_0%,#7eb6e0_45%,#4a8fc8_100%)]" />
+        </div>
+      )}
     </div>
   );
 }

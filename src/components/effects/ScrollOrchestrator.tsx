@@ -8,26 +8,90 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function ScrollOrchestrator() {
   useEffect(() => {
-    const sections = document.querySelectorAll("[data-module]");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
 
-    sections.forEach((section) => {
-      gsap.fromTo(
-        section,
-        { opacity: 0.6 },
-        {
-          opacity: 1,
+    const ctx = gsap.context(() => {
+      gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 48, filter: "blur(6px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 88%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      });
+
+      gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((el) => {
+        const speed = Number(el.dataset.parallax || 40);
+        gsap.to(el, {
+          y: speed,
           ease: "none",
           scrollTrigger: {
-            trigger: section,
-            start: "top 80%",
-            end: "top 30%",
-            scrub: 1,
+            trigger: el,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
           },
-        }
-      );
+        });
+      });
+
+      gsap.utils.toArray<HTMLElement>("[data-scale-in]").forEach((el) => {
+        gsap.fromTo(
+          el,
+          { scale: 0.92, opacity: 0.5 },
+          {
+            scale: 1,
+            opacity: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 90%",
+              end: "top 45%",
+              scrub: 1,
+            },
+          }
+        );
+      });
+
+      gsap.utils.toArray<HTMLElement>("[data-stagger]").forEach((group) => {
+        const kids = group.querySelectorAll("[data-stagger-item]");
+        gsap.fromTo(
+          kids,
+          { opacity: 0, y: 28 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            stagger: 0.08,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: group,
+              start: "top 85%",
+            },
+          }
+        );
+      });
     });
 
-    return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+    const refresh = () => ScrollTrigger.refresh();
+    window.addEventListener("load", refresh);
+    const t = window.setTimeout(refresh, 400);
+
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("load", refresh);
+      ctx.revert();
+    };
   }, []);
 
   return null;

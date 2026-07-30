@@ -37,11 +37,11 @@ interface GitHubPayload {
 }
 
 const LEVEL = [
-  "bg-[#ebedf0]",
-  "bg-[#c6d7f8]",
-  "bg-[#8babf0]",
-  "bg-[#4c7de0]",
-  "bg-[#2f6fed]",
+  "bg-[#e8e8ed]",
+  "bg-[#b3d7ff]",
+  "bg-[#6eb6ff]",
+  "bg-[#2997ff]",
+  "bg-[#0071e3]",
 ] as const;
 
 function ContributionGraph({
@@ -51,7 +51,7 @@ function ContributionGraph({
 }) {
   if (!days.length) {
     return (
-      <p className="text-sm text-muted">
+      <p className="text-[15px] text-muted">
         Contribution graph unavailable right now.
       </p>
     );
@@ -104,7 +104,7 @@ export function GitHubActivity() {
   useEffect(() => {
     fetch(`/api/github?username=${siteConfig.github}`)
       .then((r) => r.json())
-      .then((json) => setData(json))
+      .then(setData)
       .catch(() => setError(true));
   }, []);
 
@@ -118,39 +118,33 @@ export function GitHubActivity() {
   ];
 
   return (
-    <section id="github" className="section-pad relative bg-transparent">
-      <div className="container-wide">
-        <SectionReveal variant="clip">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="font-mono text-[12px] tracking-[0.16em] text-muted uppercase">
-                GitHub
-              </p>
-              <h2 className="mt-6 max-w-2xl text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.05] font-semibold tracking-[-0.05em] text-foreground">
-                Signal from the workbench.
-              </h2>
-            </div>
+    <section id="github" className="section-pad bg-background-soft">
+      <div className="container-brand">
+        <SectionReveal>
+          <h2 className="text-center text-[32px] font-semibold tracking-[-0.02em] text-foreground md:text-[40px]">
+            GitHub activity.
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-center text-[19px] text-muted md:text-[21px]">
+            Signal from the workbench.
+          </p>
+          <div className="mt-4 text-center">
             <a
               href={siteConfig.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="focus-ring inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-colors hover:text-accent"
+              className="apple-link focus-ring rounded-sm"
             >
-              @{siteConfig.github}
-              <ArrowUpRight className="h-4 w-4" />
+              @{siteConfig.github} ›
             </a>
           </div>
         </SectionReveal>
 
-        <SectionReveal delay={0.06}>
-          <div className="mt-12 grid gap-4 sm:grid-cols-3">
+        <SectionReveal delay={0.05}>
+          <div className="mt-10 grid gap-4 sm:grid-cols-3">
             {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-2xl border border-border bg-background-soft px-5 py-5"
-              >
-                <p className="text-sm text-muted">{stat.label}</p>
-                <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-foreground">
+              <div key={stat.label} className="tile bg-white p-6 text-center">
+                <p className="text-[14px] text-muted">{stat.label}</p>
+                <p className="mt-2 text-[32px] font-semibold tracking-[-0.03em] text-foreground">
                   {stat.value}
                 </p>
               </div>
@@ -158,16 +152,16 @@ export function GitHubActivity() {
           </div>
         </SectionReveal>
 
-        <SectionReveal delay={0.1}>
-          <div className="mt-10 rounded-2xl border border-border bg-white p-5 md:p-6">
+        <SectionReveal delay={0.08}>
+          <div className="tile mt-4 bg-white p-6 md:p-8">
             <div className="mb-4 flex items-center justify-between gap-4">
-              <p className="text-sm font-medium text-foreground">
+              <p className="text-[15px] font-semibold text-foreground">
                 Contribution activity
               </p>
-              <p className="text-xs text-muted-soft">Last 12 months</p>
+              <p className="text-[12px] text-muted-soft">Last 12 months</p>
             </div>
             {error ? (
-              <p className="text-sm text-muted">Unable to load activity.</p>
+              <p className="text-[15px] text-muted">Unable to load activity.</p>
             ) : !data ? (
               <div className="h-[82px] animate-pulse rounded-md bg-background-soft" />
             ) : (
@@ -176,97 +170,93 @@ export function GitHubActivity() {
           </div>
         </SectionReveal>
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:gap-14">
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
           <SectionReveal delay={0.08}>
-            <h3 className="text-sm font-medium tracking-[-0.01em] text-foreground">
-              Pinned repositories
-            </h3>
-            <ul className="mt-5 space-y-0 border-t border-border">
-              {!data &&
-                [0, 1, 2].map((i) => (
-                  <li key={`skeleton-${i}`} className="border-b border-border py-5">
-                    <div className="h-4 w-32 animate-pulse rounded bg-background-soft" />
-                    <div className="mt-3 h-3 w-full max-w-sm animate-pulse rounded bg-background-soft" />
+            <div className="tile h-full bg-white p-6 md:p-8">
+              <h3 className="text-[21px] font-semibold tracking-[-0.02em] text-foreground">
+                Repositories
+              </h3>
+              <ul className="mt-5 space-y-4">
+                {!data &&
+                  [0, 1, 2].map((i) => (
+                    <li key={i}>
+                      <div className="h-4 w-32 animate-pulse rounded bg-background-soft" />
+                    </li>
+                  ))}
+                {data?.repos.map((repo) => (
+                  <li key={repo.name}>
+                    <a
+                      href={repo.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group focus-ring block rounded-md"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="font-semibold text-foreground group-hover:text-accent">
+                          {repo.name}
+                        </p>
+                        <ArrowUpRight className="h-4 w-4 text-muted-soft" />
+                      </div>
+                      {repo.description && (
+                        <p className="mt-1 line-clamp-2 text-[14px] text-muted">
+                          {repo.description}
+                        </p>
+                      )}
+                      <div className="mt-2 flex gap-3 text-[12px] text-muted-soft">
+                        {repo.language && <span>{repo.language}</span>}
+                        <span className="inline-flex items-center gap-1">
+                          <Star className="h-3 w-3" />
+                          {repo.stars}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <GitFork className="h-3 w-3" />
+                          {repo.forks}
+                        </span>
+                      </div>
+                    </a>
                   </li>
                 ))}
-              {data?.repos.map((repo) => (
-                <li key={repo.name} className="border-b border-border py-5">
-                  <a
-                    href={repo.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group focus-ring block rounded-md"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="font-medium tracking-[-0.02em] text-foreground transition-colors group-hover:text-accent">
-                        {repo.name}
-                      </p>
-                      <ArrowUpRight className="mt-0.5 h-4 w-4 shrink-0 text-muted-soft opacity-0 transition-opacity group-hover:opacity-100" />
-                    </div>
-                    {repo.description && (
-                      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted">
-                        {repo.description}
-                      </p>
-                    )}
-                    <div className="mt-3 flex items-center gap-4 text-xs text-muted-soft">
-                      {repo.language && <span>{repo.language}</span>}
-                      <span className="inline-flex items-center gap-1">
-                        <Star className="h-3 w-3" />
-                        {repo.stars}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <GitFork className="h-3 w-3" />
-                        {repo.forks}
-                      </span>
-                    </div>
-                  </a>
-                </li>
-              ))}
-              {data && data.repos.length === 0 && (
-                <li className="py-6 text-sm text-muted">No public repositories yet.</li>
-              )}
-            </ul>
+              </ul>
+            </div>
           </SectionReveal>
 
-          <SectionReveal delay={0.12}>
-            <h3 className="text-sm font-medium tracking-[-0.01em] text-foreground">
-              Recent commits
-            </h3>
-            <ul className="mt-5 space-y-0 border-t border-border">
-              {!data &&
-                [0, 1, 2, 3].map((i) => (
-                  <li key={`commit-skeleton-${i}`} className="border-b border-border py-4">
-                    <div className="h-3.5 w-[75%] animate-pulse rounded bg-background-soft" />
-                    <div className="mt-2 h-2.5 w-40 animate-pulse rounded bg-background-soft" />
+          <SectionReveal delay={0.1}>
+            <div className="tile h-full bg-white p-6 md:p-8">
+              <h3 className="text-[21px] font-semibold tracking-[-0.02em] text-foreground">
+                Recent commits
+              </h3>
+              <ul className="mt-5 space-y-4">
+                {!data &&
+                  [0, 1, 2, 3].map((i) => (
+                    <li key={i}>
+                      <div className="h-3.5 w-3/4 animate-pulse rounded bg-background-soft" />
+                    </li>
+                  ))}
+                {data?.recentCommits.map((commit, i) => (
+                  <li key={`${commit.sha}-${i}`}>
+                    <a
+                      href={commit.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="focus-ring block rounded-md"
+                    >
+                      <p className="line-clamp-1 text-[15px] font-medium text-foreground hover:text-accent">
+                        {commit.message}
+                      </p>
+                      <p className="mt-1 text-[12px] text-muted-soft">
+                        {commit.repo.replace(`${siteConfig.github}/`, "")} ·{" "}
+                        {commit.sha} · {formatRelative(commit.at)}
+                      </p>
+                    </a>
                   </li>
                 ))}
-              {data?.recentCommits.map((commit, i) => (
-                <li key={`${commit.sha}-${i}`} className="border-b border-border py-4">
-                  <a
-                    href={commit.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="focus-ring group block rounded-md"
-                  >
-                    <p className="line-clamp-1 text-sm font-medium tracking-[-0.01em] text-foreground transition-colors group-hover:text-accent">
-                      {commit.message}
-                    </p>
-                    <p className="mt-1.5 font-mono text-[11px] text-muted-soft">
-                      {commit.repo.replace(`${siteConfig.github}/`, "")}
-                      <span className="mx-2">·</span>
-                      {commit.sha}
-                      <span className="mx-2">·</span>
-                      {formatRelative(commit.at)}
-                    </p>
-                  </a>
-                </li>
-              ))}
-              {data && data.recentCommits.length === 0 && (
-                <li className="py-6 text-sm text-muted">
-                  No recent public push events.
-                </li>
-              )}
-            </ul>
+                {data && data.recentCommits.length === 0 && (
+                  <li className="text-[15px] text-muted">
+                    No recent public push events.
+                  </li>
+                )}
+              </ul>
+            </div>
           </SectionReveal>
         </div>
       </div>

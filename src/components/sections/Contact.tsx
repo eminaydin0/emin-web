@@ -1,66 +1,57 @@
 "use client";
 
+import { motion, useReducedMotion } from "framer-motion";
 import { SectionReveal } from "@/components/brand/SectionReveal";
-import { TextReveal } from "@/components/brand/TextReveal";
-import { MagneticButton } from "@/components/brand/MagneticButton";
 import { siteConfig } from "@/data/site";
-import { ArrowUpRight } from "lucide-react";
 
 export function Contact() {
+  const reduce = useReducedMotion();
+
   return (
-    <section id="contact" className="section-pad relative overflow-hidden bg-transparent">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,rgba(47,111,237,0.06),transparent_70%)]" />
+    <section id="contact" className="section-pad relative overflow-hidden bg-background-soft">
+      <motion.div
+        className="pointer-events-none absolute -left-20 top-10 h-64 w-64 rounded-full bg-accent/10 blur-3xl"
+        animate={reduce ? undefined : { x: [0, 40, 0], y: [0, 20, 0] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="pointer-events-none absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-foreground/[0.04] blur-3xl"
+        animate={reduce ? undefined : { x: [0, -30, 0], y: [0, -25, 0] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+      />
 
-      <div className="container-brand relative">
-        <SectionReveal variant="clip">
-          <p className="font-mono text-[12px] tracking-[0.16em] text-muted uppercase">
-            Contact
+      <div className="container-brand relative text-center" data-reveal>
+        <SectionReveal>
+          <h2 className="text-[40px] font-semibold tracking-[-0.03em] text-foreground md:text-[56px]">
+            Let’s talk.
+          </h2>
+          <p className="mx-auto mt-5 max-w-lg text-[19px] leading-snug text-muted md:text-[21px]">
+            {siteConfig.availability}. For product collaborations and thoughtful
+            engineering conversations.
           </p>
-        </SectionReveal>
-
-        <TextReveal
-          as="h2"
-          delay={0.05}
-          className="mt-6 max-w-3xl text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.02] font-semibold tracking-[-0.055em] text-foreground"
-        >
-          Let’s build something that lasts.
-        </TextReveal>
-
-        <SectionReveal delay={0.1}>
-          <p className="mt-7 max-w-lg text-[16px] leading-relaxed text-muted md:text-[17px]">
-            {siteConfig.availability}. For product collaborations, platforms,
-            or thoughtful engineering conversations — reach out directly.
-          </p>
-        </SectionReveal>
-
-        <SectionReveal delay={0.14}>
-          <div className="mt-14 flex flex-col gap-10 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-sm text-muted">Email</p>
-              <a
-                href={`mailto:${siteConfig.email}`}
-                data-cursor
-                className="focus-ring group mt-3 inline-flex items-center gap-3 text-[clamp(1.25rem,3vw,2rem)] font-medium tracking-[-0.035em] text-foreground transition-colors hover:text-accent"
-              >
-                {siteConfig.email}
-                <ArrowUpRight className="h-5 w-5 opacity-40 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
-              </a>
-            </div>
-
-            <div className="flex flex-wrap gap-3">
-              <MagneticButton href={siteConfig.githubUrl} variant="ghost">
-                GitHub
-              </MagneticButton>
-              <MagneticButton href={siteConfig.linkedin} variant="ghost">
-                LinkedIn
-              </MagneticButton>
-              <MagneticButton
-                href={`mailto:${siteConfig.email}`}
-                variant="secondary"
-              >
-                Write an email
-              </MagneticButton>
-            </div>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
+            <a
+              href={`mailto:${siteConfig.email}`}
+              className="apple-link focus-ring rounded-sm"
+            >
+              {siteConfig.email}
+            </a>
+            <a
+              href={siteConfig.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="apple-link focus-ring rounded-sm"
+            >
+              GitHub ›
+            </a>
+            <a
+              href={siteConfig.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="apple-link focus-ring rounded-sm"
+            >
+              LinkedIn ›
+            </a>
           </div>
         </SectionReveal>
       </div>

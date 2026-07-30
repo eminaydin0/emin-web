@@ -4,20 +4,17 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-white">
-      <div className="container-wide flex flex-col gap-6 px-6 py-10 md:flex-row md:items-center md:justify-between md:px-10 lg:px-16">
-        <div>
-          <p className="text-sm font-medium tracking-[-0.02em] text-foreground">
-            {siteConfig.name}
-          </p>
-          <p className="mt-1 text-sm text-muted">{siteConfig.location}</p>
-        </div>
-        <div className="flex items-center gap-6 text-sm text-muted">
+    <footer className="border-t border-black/5 bg-background-soft">
+      <div className="mx-auto flex max-w-[980px] flex-col gap-4 px-5 py-8 text-[12px] text-muted-soft md:flex-row md:items-center md:justify-between md:px-6">
+        <p>
+          Copyright © {year} {siteConfig.name}. All rights reserved.
+        </p>
+        <div className="flex gap-5">
           <a
             href={siteConfig.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="focus-ring transition-colors hover:text-foreground"
+            className="hover:text-muted"
           >
             GitHub
           </a>
@@ -25,18 +22,14 @@ export function SiteFooter() {
             href={siteConfig.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="focus-ring transition-colors hover:text-foreground"
+            className="hover:text-muted"
           >
             LinkedIn
           </a>
-          <a
-            href={`mailto:${siteConfig.email}`}
-            className="focus-ring transition-colors hover:text-foreground"
-          >
+          <a href={`mailto:${siteConfig.email}`} className="hover:text-muted">
             Email
           </a>
         </div>
-        <p className="text-sm text-muted-soft">© {year}</p>
       </div>
     </footer>
   );

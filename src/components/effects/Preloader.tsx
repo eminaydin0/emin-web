@@ -14,7 +14,7 @@ export function Preloader() {
       return;
     }
 
-    const lock = window.setTimeout(() => setDone(true), 1600);
+    const lock = window.setTimeout(() => setDone(true), 1100);
     return () => window.clearTimeout(lock);
   }, [reduce]);
 

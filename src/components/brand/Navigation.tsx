@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { siteConfig, navLinks } from "@/data/site";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +19,7 @@ export function Navigation() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -37,35 +37,35 @@ export function Navigation() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background,border,backdrop-filter] duration-300",
+        "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
         scrolled || open
-          ? "border-b border-border/80 bg-white/80 backdrop-blur-xl"
-          : "border-b border-transparent bg-transparent"
+          ? "bg-[rgba(251,251,253,0.8)] backdrop-blur-[20px] backdrop-saturate-180"
+          : "bg-[rgba(251,251,253,0.72)] backdrop-blur-[20px] backdrop-saturate-180"
       )}
     >
-      <nav className="container-wide flex h-16 items-center justify-between px-6 md:h-[4.25rem] md:px-10 lg:px-16">
+      <nav className="mx-auto flex h-12 max-w-[1024px] items-center justify-between px-5 md:px-6">
         <a
           href={homeHref}
-          className="focus-ring text-[15px] font-medium tracking-[-0.02em] text-foreground"
+          className="focus-ring text-[14px] font-semibold tracking-[-0.01em] text-foreground"
         >
           {siteConfig.name}
         </a>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-7 md:flex">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={resolveHref(link.href, pathname)}
-              className="focus-ring text-[13px] text-muted transition-colors hover:text-foreground"
+              className="focus-ring text-[12px] text-foreground/80 transition-opacity hover:opacity-60"
             >
               {link.label}
             </a>
           ))}
           <a
             href={resolveHref("#contact", pathname)}
-            className="focus-ring rounded-full bg-foreground px-4 py-2 text-[13px] font-medium text-white transition-colors hover:bg-foreground/90"
+            className="focus-ring rounded-full bg-accent px-3 py-1 text-[12px] font-normal text-white transition-colors hover:bg-accent-hover"
           >
-            Get in touch
+            Contact
           </a>
         </div>
 
@@ -74,18 +74,18 @@ export function Navigation() {
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="focus-ring relative flex h-10 w-10 items-center justify-center md:hidden"
+          className="focus-ring relative flex h-9 w-9 items-center justify-center md:hidden"
         >
           <span
             className={cn(
-              "absolute h-px w-5 bg-foreground transition-transform duration-300",
-              open ? "rotate-45" : "-translate-y-1.5"
+              "absolute h-px w-4 bg-foreground transition-transform duration-300",
+              open ? "rotate-45" : "-translate-y-1"
             )}
           />
           <span
             className={cn(
-              "absolute h-px w-5 bg-foreground transition-transform duration-300",
-              open ? "-rotate-45" : "translate-y-1.5"
+              "absolute h-px w-4 bg-foreground transition-transform duration-300",
+              open ? "-rotate-45" : "translate-y-1"
             )}
           />
         </button>
@@ -94,30 +94,22 @@ export function Navigation() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
+            initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="border-t border-border bg-white px-6 py-8 md:hidden"
+            exit={{ opacity: 0, y: -6 }}
+            className="border-t border-black/5 bg-[#fbfbfd] px-5 py-6 md:hidden"
           >
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={resolveHref(link.href, pathname)}
                   onClick={() => setOpen(false)}
-                  className="text-2xl font-medium tracking-[-0.03em] text-foreground"
+                  className="text-[28px] font-semibold tracking-[-0.02em] text-foreground"
                 >
                   {link.label}
                 </a>
               ))}
-              <a
-                href={resolveHref("#contact", pathname)}
-                onClick={() => setOpen(false)}
-                className="mt-2 inline-flex w-fit rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-white"
-              >
-                Get in touch
-              </a>
             </div>
           </motion.div>
         )}
