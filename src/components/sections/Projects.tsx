@@ -1,197 +1,220 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import useEmblaCarousel from "embla-carousel-react";
-import Autoplay from "embla-carousel-autoplay";
-import { ArrowUpRight, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
-import { GitHubIcon } from "@/components/icons/brand-icons";
-import Link from "next/link";
-import { useCallback, useState } from "react";
-import { SectionHeading } from "@/components/shared/SectionHeading";
-import { Badge } from "@/components/ui/badge";
-import { projects, projectCategories } from "@/data/projects";
+import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import { SectionReveal } from "@/components/brand/SectionReveal";
+import { featuredProjects, type FeaturedProject } from "@/data/site";
 import { cn } from "@/lib/utils";
 
-function MacBookMockup({ gradient, accent, title }: { gradient: string; accent: string; title: string }) {
+const toneStyles: Record<
+  FeaturedProject["tone"],
+  { stage: string; screen: string; accent: string }
+> = {
+  indigo: {
+    stage: "from-[#eef3ff] via-[#f7f8fc] to-[#ffffff]",
+    screen: "from-[#1e3a8a] via-[#2f6fed] to-[#60a5fa]",
+    accent: "bg-accent",
+  },
+  slate: {
+    stage: "from-[#f1f5f9] via-[#f8fafc] to-[#ffffff]",
+    screen: "from-[#0f172a] via-[#334155] to-[#64748b]",
+    accent: "bg-slate-700",
+  },
+  zinc: {
+    stage: "from-[#f4f4f5] via-[#fafafa] to-[#ffffff]",
+    screen: "from-[#18181b] via-[#3f3f46] to-[#a1a1aa]",
+    accent: "bg-zinc-800",
+  },
+};
+
+function ProjectShowcase({
+  project,
+  index,
+}: {
+  project: FeaturedProject;
+  index: number;
+}) {
+  const tone = toneStyles[project.tone];
+  const reversed = index % 2 === 1;
+
   return (
-    <div className="relative mx-auto w-full max-w-md group/mockup">
-      <div className="rounded-t-2xl bg-zinc-900/80 border border-white/10 p-2.5 pb-0 shadow-2xl">
-        <div className="flex items-center gap-1.5 px-2 py-1.5 mb-1">
-          <span className="h-2 w-2 rounded-full bg-red-500/70" />
-          <span className="h-2 w-2 rounded-full bg-yellow-500/70" />
-          <span className="h-2 w-2 rounded-full bg-green-500/70" />
-        </div>
-        <div className={cn("aspect-[16/10] rounded-t-xl overflow-hidden relative", `bg-gradient-to-br ${gradient}`)}>
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6">
-            <div
-              className="h-14 w-14 rounded-2xl flex items-center justify-center text-lg font-bold font-display"
-              style={{ backgroundColor: `${accent}25`, color: accent, border: `1px solid ${accent}40` }}
-            >
-              {title.charAt(0)}
+    <article className="border-t border-border py-16 md:py-24 first:border-t-0 first:pt-0">
+      <div
+        className={cn(
+          "grid items-center gap-10 lg:grid-cols-2 lg:gap-16",
+          reversed && "lg:[&>*:first-child]:order-2"
+        )}
+      >
+        <SectionReveal>
+          <div className="max-w-lg">
+            <div className="flex flex-wrap items-center gap-3 text-[12px] text-muted">
+              <span className="font-mono tracking-[0.12em] uppercase">
+                {project.category}
+              </span>
+              <span className="h-1 w-1 rounded-full bg-border-strong" />
+              <span className="font-mono">{project.year}</span>
             </div>
-            <p className="text-xs text-white/40 font-mono truncate max-w-full">{title}</p>
+
+            <h3 className="mt-5 text-[clamp(1.85rem,3.5vw,2.75rem)] leading-[1.05] font-semibold tracking-[-0.04em] text-foreground">
+              {project.name}
+            </h3>
+
+            <p className="mt-4 text-[16px] leading-relaxed text-muted md:text-[17px]">
+              {project.summary}
+            </p>
+
+            <p className="mt-4 text-[15px] leading-relaxed text-foreground/75">
+              {project.narrative}
+            </p>
+
+            <ul className="mt-8 space-y-3">
+              {project.outcomes.map((outcome) => (
+                <li
+                  key={outcome}
+                  className="flex gap-3 text-sm leading-snug text-muted"
+                >
+                  <span
+                    className={cn(
+                      "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full",
+                      tone.accent
+                    )}
+                  />
+                  {outcome}
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-8 flex flex-wrap gap-2">
+              {project.stack.map((tech) => (
+                <span
+                  key={tech}
+                  className="rounded-full border border-border bg-white px-3 py-1 text-[12px] text-muted"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+
+            {project.href && (
+              <a
+                href={project.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="focus-ring group mt-10 inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-colors hover:text-accent"
+              >
+                Visit product
+                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </a>
+            )}
           </div>
-          <div className="absolute inset-0 shimmer opacity-50" />
-          <div
-            className="absolute inset-0 opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-500"
-            style={{ background: `radial-gradient(circle at 50% 50%, ${accent}15, transparent 70%)` }}
-          />
-        </div>
+        </SectionReveal>
+
+        <SectionReveal delay={0.1}>
+          <motion.a
+            href={project.href}
+            target={project.href ? "_blank" : undefined}
+            rel={project.href ? "noopener noreferrer" : undefined}
+            className={cn(
+              "group relative block overflow-hidden rounded-[28px] bg-gradient-to-br p-6 shadow-[var(--shadow-md)] transition-shadow duration-500 hover:shadow-[var(--shadow-lg)] md:p-8",
+              tone.stage
+            )}
+            whileHover={{ y: -4 }}
+            transition={{ type: "spring", stiffness: 260, damping: 22 }}
+          >
+            <div className="overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[var(--shadow-sm)]">
+              <div className="flex items-center gap-1.5 border-b border-border px-4 py-3">
+                <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+                <span className="ml-3 truncate font-mono text-[11px] text-muted-soft">
+                  {project.name.toLowerCase().replace(/\s+/g, "")}.app
+                </span>
+              </div>
+
+              <div
+                className={cn(
+                  "relative aspect-[16/10] overflow-hidden bg-gradient-to-br",
+                  tone.screen
+                )}
+              >
+                <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.45),transparent_45%)]" />
+                <div className="absolute inset-x-6 top-6 bottom-6 grid grid-cols-[0.28fr_1fr] gap-3 md:inset-x-8 md:top-8 md:bottom-8 md:gap-4">
+                  <div className="rounded-xl bg-white/10 backdrop-blur-sm">
+                    <div className="space-y-2 p-3 md:p-4">
+                      <div className="h-2 w-10 rounded-full bg-white/40" />
+                      <div className="h-2 w-14 rounded-full bg-white/20" />
+                      <div className="h-2 w-12 rounded-full bg-white/20" />
+                      <div className="mt-4 h-2 w-16 rounded-full bg-white/25" />
+                      <div className="h-2 w-11 rounded-full bg-white/15" />
+                    </div>
+                  </div>
+                  <div className="grid gap-3">
+                    <div className="grid grid-cols-3 gap-3">
+                      {[1, 2, 3].map((i) => (
+                        <div
+                          key={i}
+                          className="rounded-xl bg-white/12 p-3 backdrop-blur-sm"
+                        >
+                          <div className="h-2 w-8 rounded-full bg-white/35" />
+                          <div className="mt-3 h-5 w-12 rounded-md bg-white/25" />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex-1 rounded-xl bg-white/10 p-4 backdrop-blur-sm">
+                      <div className="mb-4 flex items-center justify-between">
+                        <div className="h-2.5 w-20 rounded-full bg-white/35" />
+                        <div className="h-2.5 w-10 rounded-full bg-white/20" />
+                      </div>
+                      <div className="space-y-2.5">
+                        {[1, 2, 3, 4].map((row) => (
+                          <div
+                            key={row}
+                            className="flex items-center gap-3"
+                          >
+                            <div className="h-2 flex-1 rounded-full bg-white/15" />
+                            <div className="h-2 w-10 rounded-full bg-white/25" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/5" />
+              </div>
+            </div>
+          </motion.a>
+        </SectionReveal>
       </div>
-      <div className="h-3.5 bg-zinc-800 rounded-b-2xl mx-auto w-[104%] -ml-[2%] border-x border-b border-white/5" />
-      <div className="h-1.5 bg-zinc-700/80 rounded-b-xl mx-auto w-[55%]" />
-    </div>
+    </article>
   );
 }
 
 export function Projects() {
-  const [filter, setFilter] = useState("all");
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-
-  const filtered = filter === "all"
-    ? projects
-    : projects.filter((p) => p.category === filter);
-
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, align: "start", slidesToScroll: 1 },
-    [Autoplay({ delay: 5000, stopOnInteraction: true })]
-  );
-
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
-
   return (
-    <section id="projects" className="section-padding relative" aria-label="Projects">
+    <section id="work" className="section-pad bg-background">
       <div className="container-wide">
-        <SectionHeading
-          label="Projeler"
-          title="Seçilmiş çalışmalar"
-          description="Tasarladığım ve geliştirdiğim açık kaynak projeler ile üretim deneyimlerim."
-        />
+        <SectionReveal>
+          <p className="font-mono text-[12px] tracking-[0.14em] text-muted uppercase">
+            Featured work
+          </p>
+          <h2 className="mt-5 max-w-2xl text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.1] font-semibold tracking-[-0.045em] text-foreground">
+            Products shipped for real operations.
+          </h2>
+          <p className="mt-5 max-w-xl text-[16px] leading-relaxed text-muted">
+            Selected platforms where interface, roles, and business logic had to
+            work as one system — not just look finished.
+          </p>
+        </SectionReveal>
 
-        <div className="flex flex-wrap gap-2 mb-12">
-          {projectCategories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setFilter(cat.id)}
-              className={cn(
-                "px-4 py-2 rounded-full text-sm transition-all duration-300 focus-ring",
-                filter === cat.id
-                  ? "bg-violet-500/20 text-violet-300 border border-violet-500/30"
-                  : "text-white/40 hover:text-white/70 border border-transparent"
-              )}
-              data-cursor="pointer"
-            >
-              {cat.label}
-            </button>
+        <div className="mt-16 md:mt-20">
+          {featuredProjects.map((project, index) => (
+            <ProjectShowcase
+              key={project.id}
+              project={project}
+              index={index}
+            />
           ))}
-        </div>
-
-        <div className="relative">
-          <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex gap-6">
-              <AnimatePresence mode="popLayout">
-                {filtered.map((project) => (
-                  <motion.div
-                    key={project.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.4 }}
-                    className="flex-[0_0_100%] md:flex-[0_0_calc(50%-12px)] lg:flex-[0_0_calc(33.333%-16px)] min-w-0"
-                    onMouseEnter={() => setHoveredId(project.id)}
-                    onMouseLeave={() => setHoveredId(null)}
-                  >
-                    <div className="glow-card border-gradient rounded-3xl overflow-hidden group h-full flex flex-col transition-all duration-500">
-                      <div className="p-6 pb-0">
-                        <MacBookMockup
-                          gradient={project.gradient}
-                          accent={project.accent}
-                          title={project.title}
-                        />
-                      </div>
-
-                      <div className="p-6 flex-1 flex flex-col">
-                        <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <span className="text-xs font-mono text-white/30">
-                              {project.year}
-                            </span>
-                            <h3 className="mt-1 text-xl font-semibold text-white group-hover:text-gradient-accent transition-all">
-                              {project.title}
-                            </h3>
-                          </div>
-                          <motion.div
-                            animate={{ rotate: hoveredId === project.id ? 45 : 0 }}
-                            className="shrink-0"
-                          >
-                            <ArrowUpRight className="h-5 w-5 text-white/30" />
-                          </motion.div>
-                        </div>
-
-                        <p className="mt-3 text-sm text-white/50 leading-relaxed flex-1">
-                          {project.description}
-                        </p>
-
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          {project.technologies.slice(0, 4).map((tech) => (
-                            <Badge key={tech}>{tech}</Badge>
-                          ))}
-                        </div>
-
-                        <div className="mt-5 flex gap-3">
-                          {project.link && (
-                            <Link
-                              href={project.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors focus-ring rounded"
-                              data-cursor="pointer"
-                            >
-                              <ExternalLink className="h-3 w-3" />
-                              Live
-                            </Link>
-                          )}
-                          {project.github && (
-                            <Link
-                              href={project.github}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors focus-ring rounded"
-                              data-cursor="pointer"
-                            >
-                              <GitHubIcon className="h-3 w-3" />
-                              Code
-                            </Link>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-          </div>
-
-          <div className="flex justify-center gap-3 mt-8">
-            <button
-              onClick={scrollPrev}
-              className="p-3 rounded-full border border-white/10 text-white/50 hover:text-white hover:border-white/20 transition-all focus-ring"
-              aria-label="Previous project"
-              data-cursor="pointer"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              onClick={scrollNext}
-              className="p-3 rounded-full border border-white/10 text-white/50 hover:text-white hover:border-white/20 transition-all focus-ring"
-              aria-label="Next project"
-              data-cursor="pointer"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </div>
         </div>
       </div>
     </section>

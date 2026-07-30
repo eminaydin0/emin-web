@@ -1,116 +1,98 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SectionHeading } from "@/components/shared/SectionHeading";
-import { Badge } from "@/components/ui/badge";
+import { motion, useReducedMotion } from "framer-motion";
+import { SectionReveal } from "@/components/brand/SectionReveal";
 import { experience } from "@/data/experience";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export function Experience() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    const items = sectionRef.current.querySelectorAll("[data-exp-item]");
-    items.forEach((item, i) => {
-      gsap.fromTo(
-        item,
-        { opacity: 0, y: 60 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          delay: i * 0.1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: item,
-            start: "top 85%",
-          },
-        }
-      );
-    });
-
-    return () => ScrollTrigger.getAll().forEach((t) => t.kill());
-  }, []);
+  const reduce = useReducedMotion();
 
   return (
-    <section
-      id="experience"
-      className="section-padding relative"
-      aria-label="Experience"
-    >
-      <div className="container-wide">
-        <SectionHeading
-          label="Deneyim"
-          title="Kariyer yolculuğum"
-          description="Yüksek etkili ürünler geliştirdiğim profesyonel deneyimlerim."
-        />
+    <section id="experience" className="section-pad bg-background">
+      <div className="container-brand">
+        <SectionReveal>
+          <p className="font-mono text-[12px] tracking-[0.14em] text-muted uppercase">
+            Experience
+          </p>
+          <h2 className="mt-5 max-w-2xl text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.1] font-semibold tracking-[-0.045em] text-foreground">
+            A path through product surfaces that had to work.
+          </h2>
+        </SectionReveal>
 
-        <div ref={sectionRef} className="relative max-w-3xl mx-auto">
-          <div className="absolute left-[27px] md:left-1/2 md:-translate-x-px top-0 bottom-0 w-px bg-gradient-to-b from-violet-500/40 via-indigo-500/20 to-transparent" />
+        <div className="relative mt-16 md:mt-20">
+          <div
+            className="absolute top-2 bottom-2 left-[7px] hidden w-px bg-border md:left-[11px] md:block"
+            aria-hidden
+          />
 
-          {experience.map((exp, i) => (
-            <div
-              key={exp.id}
-              data-exp-item
-              className={`relative flex gap-8 mb-12 ${
-                i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-              }`}
-            >
-              <div className="hidden md:block md:w-1/2" />
-
-              <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 z-10">
+          <ol className="space-y-0">
+            {experience.map((item, index) => (
+              <li key={item.id} className="relative md:pl-12">
                 <motion.div
-                  whileHover={{ scale: 1.2 }}
-                  className="h-14 w-14 rounded-2xl border border-violet-500/30 bg-[#030308] flex items-center justify-center font-display font-bold text-sm text-violet-400 shadow-[0_0_20px_rgba(139,92,246,0.15)]"
+                  initial={reduce ? false : { opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{
+                    duration: 0.65,
+                    delay: index * 0.06,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  className="border-t border-border py-10 first:border-t-0 first:pt-0 md:py-12"
                 >
-                  {exp.company.charAt(0)}
-                </motion.div>
-              </div>
+                  <span
+                    className="absolute top-12 left-0 hidden h-2.5 w-2.5 rounded-full border-2 border-accent bg-white md:top-14 md:left-[7px] md:block"
+                    aria-hidden
+                  />
 
-              <div className="flex-1 md:w-1/2 pl-20 md:pl-0">
-                <div className="glass rounded-2xl p-6 hover:border-white/15 transition-all duration-300 group">
-                  <div className="flex flex-wrap items-center gap-3 mb-3">
-                    <span className="text-xs font-mono text-violet-400">
-                      {exp.period}
-                    </span>
-                    <span className="text-xs text-white/30">·</span>
-                    <span className="text-xs text-white/40">{exp.location}</span>
+                  <div className="grid gap-6 lg:grid-cols-[220px_1fr] lg:gap-12">
+                    <div>
+                      <p className="font-mono text-[12px] tracking-[0.08em] text-muted uppercase">
+                        {item.period}
+                      </p>
+                      <p className="mt-2 text-sm text-muted-soft">
+                        {item.location}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h3 className="text-xl font-semibold tracking-[-0.03em] text-foreground md:text-2xl">
+                        {item.role}
+                      </h3>
+                      <p className="mt-1 text-[15px] font-medium text-accent">
+                        {item.company}
+                      </p>
+                      <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted md:text-[16px]">
+                        {item.description}
+                      </p>
+
+                      <ul className="mt-6 space-y-2.5">
+                        {item.achievements.map((achievement) => (
+                          <li
+                            key={achievement}
+                            className="flex gap-3 text-sm leading-snug text-muted"
+                          >
+                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent/70" />
+                            {achievement}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <div className="mt-6 flex flex-wrap gap-2">
+                        {item.technologies.map((tech) => (
+                          <span
+                            key={tech}
+                            className="rounded-full border border-border bg-background-soft px-3 py-1 text-[12px] text-muted"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-semibold text-white group-hover:text-gradient-accent transition-all">
-                    {exp.role}
-                  </h3>
-                  <p className="text-sm text-white/50 mt-1">{exp.company}</p>
-                  <p className="mt-4 text-sm text-white/50 leading-relaxed">
-                    {exp.description}
-                  </p>
-                  <ul className="mt-4 space-y-2">
-                    {exp.achievements.map((a) => (
-                      <li
-                        key={a}
-                        className="flex items-start gap-2 text-sm text-white/40"
-                      >
-                        <span className="text-violet-400 mt-1 shrink-0">→</span>
-                        {a}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {exp.technologies.map((tech) => (
-                      <Badge key={tech} variant="accent">
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+                </motion.div>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>

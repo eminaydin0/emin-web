@@ -1,173 +1,108 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowDown, Download, Sparkles } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { FloatingParticles } from "@/components/effects/FloatingParticles";
-import { SocialLinks } from "@/components/shared/SocialLinks";
-import { heroWords, siteConfig } from "@/data/portfolio";
+import { motion, useReducedMotion } from "framer-motion";
+import { MagneticButton } from "@/components/brand/MagneticButton";
+import { siteConfig } from "@/data/site";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-const HeroScene = dynamic(
-  () => import("@/components/three/HeroScene").then((m) => m.HeroScene),
-  { ssr: false }
+const HeroOrb = dynamic(
+  () => import("@/components/three/HeroOrb").then((m) => m.HeroOrb),
+  {
+    ssr: false,
+    loading: () => <OrbFallback />,
+  }
 );
 
-export function Hero() {
-  const [wordIndex, setWordIndex] = useState(0);
+function OrbFallback() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="relative h-[55%] w-[55%]">
+        <div className="absolute inset-0 rounded-full bg-accent-soft blur-2xl" />
+        <div className="absolute inset-[18%] rounded-full border border-accent/25 bg-gradient-to-br from-white via-accent-soft to-white shadow-[var(--shadow-md)]" />
+        <div className="absolute inset-[38%] rounded-full bg-accent/80" />
+      </div>
+    </div>
+  );
+}
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setWordIndex((prev) => (prev + 1) % heroWords.length);
-    }, 2800);
-    return () => clearInterval(interval);
-  }, []);
+export function Hero() {
+  const reduce = useReducedMotion();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const enableOrb = isDesktop && !reduce;
 
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center overflow-hidden"
-      aria-label="Hero"
+      className="relative min-h-[100svh] overflow-hidden bg-background"
     >
-      <div className="absolute inset-0 mesh-gradient" />
-      <HeroScene />
-      <FloatingParticles count={50} seed={42} />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_55%_at_70%_40%,rgba(47,111,237,0.07),transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,transparent_70%,#ffffff_100%)]" />
 
-      <div className="relative z-10 container-wide section-padding w-full pt-32 pb-24">
-        <div className="grid lg:grid-cols-[1fr_1fr] gap-12 xl:gap-20 items-center">
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white/60 backdrop-blur-md"
-            >
-              <Sparkles className="h-4 w-4 text-violet-400" />
-              <span>{siteConfig.availability}</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            </motion.div>
+      <div className="container-wide relative z-10 grid min-h-[100svh] items-center gap-10 px-6 pb-20 pt-28 md:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:px-16 lg:pt-24">
+        <div className="max-w-xl">
+          <motion.p
+            initial={reduce ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="mb-6 font-mono text-[12px] tracking-[0.14em] text-muted uppercase"
+          >
+            {siteConfig.location}
+          </motion.p>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              className="text-sm font-mono uppercase tracking-[0.2em] text-violet-400/80 mb-4"
-            >
-              {siteConfig.title}
-            </motion.p>
+          <motion.h1
+            initial={reduce ? false : { opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.75, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+            className="text-[clamp(3rem,8vw,5.75rem)] leading-[0.95] font-semibold tracking-[-0.055em] text-foreground"
+          >
+            {siteConfig.name}
+          </motion.h1>
 
-            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] font-bold tracking-[-0.03em] leading-[0.92]">
-              <motion.span
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
-                className="text-gradient block"
-              >
-                {siteConfig.name}
-              </motion.span>
-              <span className="block mt-3 text-2xl sm:text-3xl md:text-4xl font-medium text-white/40">
-                dijital{" "}
-                <span className="inline-block relative h-[1.2em] overflow-hidden align-bottom">
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={wordIndex}
-                      initial={{ y: "100%", opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: "-100%", opacity: 0 }}
-                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                      className="inline-block text-gradient-accent font-bold"
-                    >
-                      {heroWords[wordIndex]}
-                    </motion.span>
-                  </AnimatePresence>
-                </span>{" "}
-                inşa ediyorum
-              </span>
-            </h1>
+          <motion.p
+            initial={reduce ? false : { opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-5 text-lg font-medium tracking-[-0.02em] text-foreground/80 md:text-xl"
+          >
+            {siteConfig.title}
+          </motion.p>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.2 }}
-              className="mt-8 max-w-lg text-base sm:text-lg text-white/45 leading-relaxed"
-            >
-              {siteConfig.tagline}
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.4 }}
-              className="mt-10 flex flex-wrap items-center gap-4"
-            >
-              <Button asChild variant="default" size="lg" data-cursor="pointer">
-                <Link href="#projects">Projelerimi Gör</Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" data-cursor="pointer">
-                <a href={siteConfig.cvUrl} download>
-                  <Download className="h-4 w-4" />
-                  CV İndir
-                </a>
-              </Button>
-              <SocialLinks className="ml-1" />
-            </motion.div>
-          </div>
+          <motion.p
+            initial={reduce ? false : { opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.24, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-6 max-w-md text-[15px] leading-relaxed text-muted md:text-base"
+          >
+            {siteConfig.tagline}
+          </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 1.1 }}
-            className="relative hidden lg:block"
+            initial={reduce ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 0.34, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-10 flex flex-wrap items-center gap-3"
           >
-            <div className="relative mx-auto max-w-md">
-              <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-violet-500/20 via-transparent to-indigo-500/20 blur-2xl" />
-              <div className="glow-card rounded-[2rem] overflow-hidden border-gradient relative">
-                <div className="relative aspect-[3/4] overflow-hidden">
-                  <Image
-                    src={siteConfig.profileImage}
-                    alt={siteConfig.name}
-                    fill
-                    className="object-cover object-center grayscale hover:grayscale-0 transition-all duration-700"
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 400px"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#030308] via-transparent to-transparent opacity-60" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <p className="text-xs font-mono text-white/40 uppercase tracking-widest mb-1">
-                      {siteConfig.location}
-                    </p>
-                    <p className="text-lg font-display font-semibold text-white">
-                      {siteConfig.title}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <MagneticButton href="#work" variant="primary">
+              View selected work
+            </MagneticButton>
+            <MagneticButton href="#contact" variant="ghost">
+              Start a conversation
+            </MagneticButton>
           </motion.div>
         </div>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 0.6 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+          initial={reduce ? false : { opacity: 0, scale: 0.94 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="relative mx-auto aspect-square w-full max-w-[420px] lg:max-w-none lg:justify-self-end"
+          aria-hidden
         >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <Link
-              href="#about"
-              className="flex flex-col items-center gap-2 text-white/25 hover:text-white/50 transition-colors focus-ring rounded-lg p-2"
-              aria-label="Hakkımda bölümüne kaydır"
-            >
-              <span className="text-[10px] uppercase tracking-[0.25em]">Kaydır</span>
-              <ArrowDown className="h-4 w-4" />
-            </Link>
-          </motion.div>
+          <div className="absolute inset-[12%] rounded-full bg-accent-soft/50 blur-3xl" />
+          <div className="relative h-full w-full">
+            {enableOrb ? <HeroOrb /> : <OrbFallback />}
+          </div>
         </motion.div>
       </div>
     </section>
