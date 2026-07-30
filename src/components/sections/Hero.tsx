@@ -21,7 +21,10 @@ const HeroOrb = dynamic(
 function GlobeFallback() {
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <div className="h-[92%] w-[92%] rounded-full bg-[radial-gradient(circle_at_32%_28%,#d0e8fa_0%,#7eb6e0_45%,#4a8fc8_100%)]" />
+      <div
+        className="h-[92%] w-[92%] rounded-full bg-cover bg-center shadow-[inset_-12px_-16px_28px_rgba(10,40,80,0.2)]"
+        style={{ backgroundImage: "url(/textures/earth.jpg)" }}
+      />
     </div>
   );
 }
@@ -29,7 +32,8 @@ function GlobeFallback() {
 export function Hero() {
   const reduce = useReducedMotion();
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const enable3D = isDesktop && !reduce;
+  // Show the globe on mobile too — lite mode keeps it light
+  const enable3D = !reduce;
   const intro = reduce ? 0 : 0.2;
   const ref = useRef<HTMLElement>(null);
 
@@ -68,7 +72,7 @@ export function Hero() {
   const globeScaleRaw = useTransform(
     scrollYProgress,
     [0, 0.45, 0.85, 1],
-    [1, 1.12, 1.26, 1.34]
+    isDesktop ? [1, 1.12, 1.26, 1.34] : [1, 1.05, 1.1, 1.14]
   );
   const globeScale = useSpring(globeScaleRaw, {
     stiffness: 70,
@@ -143,7 +147,7 @@ export function Hero() {
         </div>
 
         <div
-          className="relative z-10 mx-auto mt-8 flex min-h-0 w-full flex-1 items-center justify-center overflow-visible md:mt-10"
+          className="relative z-10 mx-auto mt-5 flex min-h-0 w-full flex-1 items-center justify-center overflow-visible md:mt-10"
           aria-hidden
         >
           <motion.div
@@ -151,10 +155,10 @@ export function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.9, delay: intro + 0.16 }}
             style={{ scale: globeScale }}
-            className="relative aspect-square h-auto w-[min(72vw,42svh,460px)] max-h-full shrink-0 will-change-transform"
+            className="relative aspect-square h-auto w-[min(78vw,32svh,280px)] max-h-full shrink-0 will-change-transform sm:w-[min(70vw,36svh,340px)] md:w-[min(72vw,42svh,460px)]"
           >
             {enable3D ? (
-              <HeroOrb scrollProgress={scrollYProgress} />
+              <HeroOrb scrollProgress={scrollYProgress} lite={!isDesktop} />
             ) : (
               <GlobeFallback />
             )}

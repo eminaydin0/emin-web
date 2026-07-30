@@ -131,8 +131,10 @@ function EarthFallbackMesh() {
 
 export function HeroOrb({
   scrollProgress,
+  lite = false,
 }: {
   scrollProgress: MotionValue<number>;
+  lite?: boolean;
 }) {
   const wrap = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
@@ -149,7 +151,6 @@ export function HeroOrb({
     check();
     const ro = new ResizeObserver(check);
     ro.observe(el);
-    // One more pass after layout settles (Lenis / sticky / fonts)
     const t = window.setTimeout(check, 120);
     return () => {
       ro.disconnect();
@@ -161,14 +162,14 @@ export function HeroOrb({
     <div ref={wrap} className="relative h-full w-full">
       {ready ? (
         <Canvas
-          dpr={[1, 2]}
+          dpr={lite ? [1, 1.25] : [1, 2]}
           camera={{ position: [0, 0, 3.95], fov: 30, near: 0.1, far: 50 }}
           resize={{ scroll: false, debounce: 0 }}
           gl={{
-            antialias: true,
+            antialias: !lite,
             alpha: true,
             premultipliedAlpha: false,
-            powerPreference: "high-performance",
+            powerPreference: lite ? "default" : "high-performance",
             stencil: false,
           }}
           onCreated={({ gl }) => {
@@ -198,18 +199,23 @@ export function HeroOrb({
             intensity={0.85}
             color="#d0e8fa"
           />
-          <directionalLight
-            position={[0, -2, 2]}
-            intensity={0.45}
-            color="#f2f8ff"
-          />
+          {!lite && (
+            <directionalLight
+              position={[0, -2, 2]}
+              intensity={0.45}
+              color="#f2f8ff"
+            />
+          )}
           <Suspense fallback={<EarthFallbackMesh />}>
             <EarthScene scrollProgress={scrollProgress} />
           </Suspense>
         </Canvas>
       ) : (
         <div className="flex h-full w-full items-center justify-center">
-          <div className="h-[92%] w-[92%] rounded-full bg-[radial-gradient(circle_at_32%_28%,#d0e8fa_0%,#7eb6e0_45%,#4a8fc8_100%)]" />
+          <div
+            className="h-[92%] w-[92%] rounded-full bg-cover bg-center"
+            style={{ backgroundImage: "url(/textures/earth.jpg)" }}
+          />
         </div>
       )}
     </div>
