@@ -1,6 +1,7 @@
 "use client";
 
 import { SectionReveal } from "@/components/brand/SectionReveal";
+import { TextReveal } from "@/components/brand/TextReveal";
 import { playgroundItems, type PlaygroundItem } from "@/data/playground";
 import { cn } from "@/lib/utils";
 
@@ -18,16 +19,22 @@ const statusTone: Record<PlaygroundItem["status"], string> = {
 
 export function Playground() {
   return (
-    <section id="playground" className="section-pad bg-background-soft">
+    <section id="playground" className="section-pad relative bg-background-soft/70">
       <div className="container-brand">
-        <SectionReveal>
-          <p className="font-mono text-[12px] tracking-[0.14em] text-muted uppercase">
+        <SectionReveal variant="clip">
+          <p className="font-mono text-[12px] tracking-[0.16em] text-muted uppercase">
             Creative playground
           </p>
-          <h2 className="mt-5 max-w-2xl text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.1] font-semibold tracking-[-0.045em] text-foreground">
-            Experiments in motion, AI, and product form.
-          </h2>
-          <p className="mt-5 max-w-xl text-[16px] leading-relaxed text-muted">
+        </SectionReveal>
+        <TextReveal
+          as="h2"
+          delay={0.05}
+          className="mt-6 max-w-2xl text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.05] font-semibold tracking-[-0.05em] text-foreground"
+        >
+          Experiments in motion, AI, and product form.
+        </TextReveal>
+        <SectionReveal delay={0.1}>
+          <p className="mt-6 max-w-xl text-[16px] leading-relaxed text-muted">
             Side studies that sharpen judgment — not demos for demos’ sake.
           </p>
         </SectionReveal>

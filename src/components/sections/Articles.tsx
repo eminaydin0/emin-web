@@ -3,20 +3,25 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { SectionReveal } from "@/components/brand/SectionReveal";
+import { TextReveal } from "@/components/brand/TextReveal";
 import { blogPosts } from "@/data/blog";
 
 export function Articles() {
   return (
-    <section id="thoughts" className="section-pad bg-background-soft">
+    <section id="thoughts" className="section-pad relative bg-background-soft/70">
       <div className="container-brand">
-        <SectionReveal>
-          <p className="font-mono text-[12px] tracking-[0.14em] text-muted uppercase">
+        <SectionReveal variant="clip">
+          <p className="font-mono text-[12px] tracking-[0.16em] text-muted uppercase">
             Thoughts
           </p>
-          <h2 className="mt-5 max-w-2xl text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.1] font-semibold tracking-[-0.045em] text-foreground">
-            Notes on systems, product, and craft.
-          </h2>
         </SectionReveal>
+        <TextReveal
+          as="h2"
+          delay={0.05}
+          className="mt-6 max-w-2xl text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.05] font-semibold tracking-[-0.05em] text-foreground"
+        >
+          Notes on systems, product, and craft.
+        </TextReveal>
 
         <div className="mt-14 border-t border-border md:mt-16">
           {blogPosts.map((post, index) => (

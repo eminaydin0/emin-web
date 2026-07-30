@@ -118,15 +118,15 @@ export function GitHubActivity() {
   ];
 
   return (
-    <section id="github" className="section-pad bg-background">
+    <section id="github" className="section-pad relative bg-transparent">
       <div className="container-wide">
-        <SectionReveal>
+        <SectionReveal variant="clip">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="font-mono text-[12px] tracking-[0.14em] text-muted uppercase">
+              <p className="font-mono text-[12px] tracking-[0.16em] text-muted uppercase">
                 GitHub
               </p>
-              <h2 className="mt-5 max-w-2xl text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.1] font-semibold tracking-[-0.045em] text-foreground">
+              <h2 className="mt-6 max-w-2xl text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.05] font-semibold tracking-[-0.05em] text-foreground">
                 Signal from the workbench.
               </h2>
             </div>

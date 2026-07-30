@@ -2,19 +2,19 @@
 
 :root {
   --background: #ffffff;
-  --background-soft: #f7f7f8;
+  --background-soft: #f6f6f7;
   --foreground: #0a0a0a;
   --muted: #6b6b76;
   --muted-soft: #a1a1aa;
-  --border: #e8e8ec;
-  --border-strong: #d4d4d8;
+  --border: #ececef;
+  --border-strong: #d8d8de;
   --accent: #2f6fed;
   --accent-soft: #eef3ff;
   --accent-hover: #1f5ad6;
   --surface: #ffffff;
   --shadow-sm: 0 1px 2px rgba(10, 10, 10, 0.04);
-  --shadow-md: 0 8px 30px rgba(10, 10, 10, 0.06);
-  --shadow-lg: 0 24px 60px rgba(10, 10, 10, 0.08);
+  --shadow-md: 0 12px 40px rgba(10, 10, 10, 0.06);
+  --shadow-lg: 0 28px 80px rgba(10, 10, 10, 0.09);
 }
 
 @theme inline {
@@ -35,7 +35,7 @@
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(10, 10, 10, 0.15) transparent;
+  scrollbar-color: rgba(10, 10, 10, 0.12) transparent;
 }
 
 html.lenis,
@@ -56,8 +56,27 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.has-custom-cursor {
+  cursor: none;
+}
+
+body.has-custom-cursor a,
+body.has-custom-cursor button,
+body.has-custom-cursor [data-cursor],
+body.has-custom-cursor [role="button"] {
+  cursor: none;
+}
+
+@media (max-width: 768px) {
+  body.has-custom-cursor,
+  body.has-custom-cursor a,
+  body.has-custom-cursor button {
+    cursor: auto;
+  }
+}
+
 ::selection {
-  background: rgba(47, 111, 237, 0.18);
+  background: rgba(47, 111, 237, 0.16);
   color: var(--foreground);
 }
 
@@ -66,7 +85,7 @@ body {
 }
 
 .section-pad {
-  @apply px-6 py-24 md:px-10 md:py-32 lg:px-16 xl:px-24;
+  @apply px-6 py-28 md:px-10 md:py-36 lg:px-16 xl:px-24;
 }
 
 .container-brand {
@@ -80,4 +99,8 @@ body {
 .focus-ring:focus-visible {
   outline: 2px solid rgba(47, 111, 237, 0.45);
   outline-offset: 3px;
+}
+
+.text-balance {
+  text-wrap: balance;
 }

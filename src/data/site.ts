@@ -28,6 +28,28 @@ export const aboutContent = {
     "My focus sits where product and operations meet: management panels, dashboards, ERP/CRM systems, and AI-assisted platforms that turn chaos into clarity for real organizations.",
     "The long game is clear — build my own software company and ship SaaS products used worldwide. Every project is practice for that ambition: end-to-end thinking, product judgment, and systems that earn trust.",
   ],
+  journey: [
+    {
+      year: "Origin",
+      title: "Curiosity became craft",
+      text: "Started by breaking interfaces apart — not to copy them, but to understand why some tools feel inevitable and others feel heavy.",
+    },
+    {
+      year: "Focus",
+      title: "Operations over ornament",
+      text: "Chose the hard surfaces: dashboards, ERP/CRM, multi-role admin systems — where clarity earns trust every day.",
+    },
+    {
+      year: "Mindset",
+      title: "Product, end to end",
+      text: "Not just screens. Roles, flows, edge cases, and the quiet details that make software feel expensive.",
+    },
+    {
+      year: "Mission",
+      title: "Build companies, not demos",
+      text: "Every shipment is rehearsal for a software company — global SaaS products that people depend on.",
+    },
+  ],
   focus: [
     { label: "Dashboards & admin systems", detail: "Clarity for operators at scale" },
     { label: "ERP / CRM platforms", detail: "Multi-role operational depth" },

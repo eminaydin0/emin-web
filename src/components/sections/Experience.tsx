@@ -2,22 +2,27 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { SectionReveal } from "@/components/brand/SectionReveal";
+import { TextReveal } from "@/components/brand/TextReveal";
 import { experience } from "@/data/experience";
 
 export function Experience() {
   const reduce = useReducedMotion();
 
   return (
-    <section id="experience" className="section-pad bg-background">
+    <section id="experience" className="section-pad relative bg-transparent">
       <div className="container-brand">
-        <SectionReveal>
-          <p className="font-mono text-[12px] tracking-[0.14em] text-muted uppercase">
+        <SectionReveal variant="clip">
+          <p className="font-mono text-[12px] tracking-[0.16em] text-muted uppercase">
             Experience
           </p>
-          <h2 className="mt-5 max-w-2xl text-[clamp(2rem,4.5vw,3.25rem)] leading-[1.1] font-semibold tracking-[-0.045em] text-foreground">
-            A path through product surfaces that had to work.
-          </h2>
         </SectionReveal>
+        <TextReveal
+          as="h2"
+          delay={0.05}
+          className="mt-6 max-w-2xl text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.05] font-semibold tracking-[-0.05em] text-foreground"
+        >
+          A path through product surfaces that had to work.
+        </TextReveal>
 
         <div className="relative mt-16 md:mt-20">
           <div
@@ -37,7 +42,7 @@ export function Experience() {
                     delay: index * 0.06,
                     ease: [0.22, 1, 0.36, 1],
                   }}
-                  className="border-t border-border py-10 first:border-t-0 first:pt-0 md:py-12"
+                  className="border-t border-border/80 py-10 first:border-t-0 first:pt-0 md:py-12"
                 >
                   <span
                     className="absolute top-12 left-0 hidden h-2.5 w-2.5 rounded-full border-2 border-accent bg-white md:top-14 md:left-[7px] md:block"
