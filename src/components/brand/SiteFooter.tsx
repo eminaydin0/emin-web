@@ -9,7 +9,13 @@ export function SiteFooter() {
         <p>
           Copyright © {year} {siteConfig.name}. All rights reserved.
         </p>
-        <div className="flex gap-5">
+        <div className="flex flex-wrap gap-5">
+          <a
+            href={`tel:+90${siteConfig.phoneRaw.slice(1)}`}
+            className="hover:text-muted"
+          >
+            Phone
+          </a>
           <a
             href={siteConfig.githubUrl}
             target="_blank"
@@ -25,6 +31,14 @@ export function SiteFooter() {
             className="hover:text-muted"
           >
             LinkedIn
+          </a>
+          <a
+            href={siteConfig.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-muted"
+          >
+            Instagram
           </a>
           <a href={`mailto:${siteConfig.email}`} className="hover:text-muted">
             Email

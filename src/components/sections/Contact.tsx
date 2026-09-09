@@ -37,6 +37,12 @@ export function Contact() {
               {siteConfig.email}
             </a>
             <a
+              href={`tel:+90${siteConfig.phoneRaw.slice(1)}`}
+              className="apple-link focus-ring rounded-sm"
+            >
+              {siteConfig.phone}
+            </a>
+            <a
               href={siteConfig.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -51,6 +57,14 @@ export function Contact() {
               className="apple-link focus-ring rounded-sm"
             >
               LinkedIn ›
+            </a>
+            <a
+              href={siteConfig.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="apple-link focus-ring rounded-sm"
+            >
+              Instagram ›
             </a>
           </div>
         </SectionReveal>

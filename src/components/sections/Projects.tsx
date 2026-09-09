@@ -2,17 +2,19 @@
 
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
+import Image from "next/image";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { SectionReveal } from "@/components/brand/SectionReveal";
-import { featuredProjects } from "@/data/site";
+import { featuredProjects, sideSites } from "@/data/site";
 import { cn } from "@/lib/utils";
 
 const tileTone: Record<string, string> = {
   indigo: "from-[#d9e9ff] via-[#eaf2ff] to-[#f5f5f7]",
   slate: "from-[#e2e5ea] via-[#eceef2] to-[#f5f5f7]",
   zinc: "from-[#e4e4e4] via-[#eeeeee] to-[#f5f5f7]",
+  rose: "from-[#f3e0e3] via-[#f7ecee] to-[#f5f5f7]",
 };
 
 export function Projects() {
@@ -37,8 +39,8 @@ export function Projects() {
   }, [emblaApi, onSelect]);
 
   return (
-    <section id="work" className="overflow-hidden bg-background py-16 md:py-24">
-      <div className="mx-auto max-w-[1200px] px-5 md:px-6">
+    <section id="work" className="overflow-hidden bg-background pt-16 md:pt-24">
+      <div className="mx-auto max-w-[1200px] px-5 pb-14 md:px-6 md:pb-16">
         <SectionReveal>
           <h2 className="text-center text-[32px] font-semibold tracking-[-0.02em] text-foreground md:text-[40px]">
             Explore the work.
@@ -99,7 +101,7 @@ export function Projects() {
 
                     <div className="relative mt-10 flex flex-1 items-end justify-center">
                       <motion.div
-                        className="w-full max-w-[380px] overflow-hidden rounded-[20px] bg-white shadow-[var(--shadow-lg)]"
+                        className="w-full max-w-[440px] overflow-hidden rounded-[20px] bg-white shadow-[var(--shadow-lg)]"
                         whileHover={{ y: -8 }}
                         transition={{ type: "spring", stiffness: 260, damping: 20 }}
                       >
@@ -107,24 +109,35 @@ export function Projects() {
                           <span className="h-2 w-2 rounded-full bg-[#ff5f57]/70" />
                           <span className="h-2 w-2 rounded-full bg-[#febc2e]/70" />
                           <span className="h-2 w-2 rounded-full bg-[#28c840]/70" />
+                          <span className="ml-2 truncate text-[11px] text-muted-soft">
+                            {project.name}
+                          </span>
                         </div>
-                        <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-[#1d1d1f] via-[#2c2c2e] to-[#5a5a5e] p-4">
-                          <motion.div
-                            className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,113,227,0.35),transparent_50%)]"
-                            animate={{ opacity: [0.4, 0.75, 0.4] }}
-                            transition={{ duration: 5, repeat: Infinity }}
-                          />
-                          <div className="relative grid h-full grid-cols-[0.3fr_1fr] gap-2">
-                            <div className="rounded-lg bg-white/10" />
-                            <div className="grid gap-2">
-                              <div className="grid grid-cols-3 gap-2">
-                                <div className="rounded-lg bg-white/12" />
-                                <div className="rounded-lg bg-white/12" />
-                                <div className="rounded-lg bg-white/12" />
+                        <div className="relative aspect-[16/10] overflow-hidden bg-[#f5f5f7]">
+                          {project.image ? (
+                            <Image
+                              src={project.image}
+                              alt={project.imageAlt ?? project.name}
+                              fill
+                              sizes="(max-width: 768px) 88vw, 440px"
+                              className="object-cover object-top"
+                              priority={index === 0}
+                            />
+                          ) : (
+                            <div className="relative h-full bg-gradient-to-br from-[#1d1d1f] via-[#2c2c2e] to-[#5a5a5e] p-4">
+                              <div className="grid h-full grid-cols-[0.3fr_1fr] gap-2">
+                                <div className="rounded-lg bg-white/10" />
+                                <div className="grid gap-2">
+                                  <div className="grid grid-cols-3 gap-2">
+                                    <div className="rounded-lg bg-white/12" />
+                                    <div className="rounded-lg bg-white/12" />
+                                    <div className="rounded-lg bg-white/12" />
+                                  </div>
+                                  <div className="rounded-lg bg-white/10" />
+                                </div>
                               </div>
-                              <div className="rounded-lg bg-white/10" />
                             </div>
-                          </div>
+                          )}
                         </div>
                       </motion.div>
                     </div>
@@ -167,6 +180,63 @@ export function Projects() {
             >
               <ChevronRight className="h-5 w-5" />
             </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative overflow-hidden bg-[#1d1d1f]">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_120%_at_50%_-20%,rgba(255,255,255,0.08),transparent_55%)]"
+        />
+        <div className="relative flex flex-col gap-4 py-7 md:flex-row md:items-center md:gap-0 md:py-8">
+          <div className="relative z-10 shrink-0 px-5 md:w-[210px] md:px-6">
+            <p className="text-[11px] font-semibold tracking-[0.16em] text-white/45 uppercase">
+              Also shipped
+            </p>
+            <p className="mt-1.5 text-[14px] leading-snug text-white/55">
+              Smaller client sites — still live.
+            </p>
+          </div>
+
+          <div className="relative min-w-0 flex-1 overflow-hidden">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-[#1d1d1f] to-transparent md:w-16"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-[#1d1d1f] to-transparent md:w-16"
+            />
+
+            <div className="group flex w-max items-center motion-safe:animate-side-marquee hover:[animation-play-state:paused]">
+              {[0, 1, 2].map((copy) => (
+                <ul
+                  key={copy}
+                  className="flex items-center"
+                  aria-hidden={copy > 0}
+                >
+                  {sideSites.map((site) => (
+                    <li key={`${copy}-${site.id}`} className="flex items-center">
+                      <a
+                        href={site.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        tabIndex={copy === 0 ? undefined : -1}
+                        className="focus-ring group/link mx-1 inline-flex items-center gap-1.5 rounded-sm px-3 py-1 text-[13px] tracking-[-0.01em] whitespace-nowrap text-white/75 transition-colors hover:text-white md:text-[14px]"
+                      >
+                        {site.name}
+                        <ArrowUpRight className="h-3 w-3 opacity-40 transition-opacity group-hover/link:opacity-80" />
+                      </a>
+                      <span
+                        aria-hidden
+                        className="mx-1 h-1 w-1 shrink-0 rounded-full bg-white/25"
+                      />
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </div>
           </div>
         </div>
       </div>
